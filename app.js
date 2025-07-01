@@ -1,25 +1,18 @@
-// npm - global command that comes with node
-// npm --version
+const http = require("http");
+const fs = require("fs");
 
-//  local dependency - use it only in this project
-// npm i <packageName>
+http
+  .createServer(function (req, res) {
+    // const text = readFileSync("./content/big.txt", "utf-8");
+    // return res.end(text);
 
-// global dependency - use it in any project
-// npm install -g <packageName>
-// sudo install -g <packageName> (mac)
+    const fileStream = fs.createReadStream("./content/big.txt", "utf-8");
 
-// dev dependencies
-// npm i <packageName> -D
-// npm i <packageName> --save-dev
-
-// package.json - manifest file (stores important info about project/package)
-// manual approach (create package.json in the root, create properties etc)
-// npm init (step by step, press enter to skip)
-// npm init -y (sets everthing to default)
-
-const _ = require("lodash");
-
-const items = [1, [2, [3, [4]]]];
-const newItems = _.flattenDeep(items);
-console.log(newItems);
-console.log("nodemon is indeed working");
+    fileStream.on("open", () => {
+      fileStream.pipe(res);
+    });
+    fileStream.on("error", (err) => {
+      return res.end(err);
+    });
+  })
+  .listen(3000);
